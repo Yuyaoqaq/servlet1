@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>合同编辑</title>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/lib/layui/css/layui.css"> <!-- 弹窗样式依赖这个文件 -->
+
+
+    <script src="/static/js/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+</head>
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="hidden" name="id">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="num" class="layui-form-label">
+                <span class="x-red">*</span>合同编号
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="num" name="num" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>请输入合同编号
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="hid" class="layui-form-label">
+                房屋编号
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="hid" name="hid" required lay-verify="required|number"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入关联房屋编号
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="lid" class="layui-form-label">
+                租户号
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="lid" name="lid" lay-verify="required|number"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入租户ID
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="totalMoney" class="layui-form-label">
+                总金额
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="totalMoney" name="totalMoney" lay-verify="required"
+                       autocomplete="off" class="layui-input" >
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入合同总金额
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="payType" class="layui-form-label">
+                付款方式
+            </label>
+            <div class="layui-input-inline">
+                <select id="payType" name="payType" lay-verify="required">
+                    <option value="0">请选择</option>
+                    <option value="1">月付</option>
+                    <option value="2">半年付</option>
+                    <option value="3">年付</option>
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请选择付款方式
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="startTime" class="layui-form-label">
+                生效时间
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="startTime" name="startTime" lay-verify="required|timeCheck"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入合同生效时间 例如 2004-11-25
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="endTime" class="layui-form-label">
+                失效时间
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="endTime" name="endTime" lay-verify="required|timeCheck"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入合同失效时间 例如 2004-11-25
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <button  class="layui-btn layui-btn-fluid" lay-filter="go" lay-submit>
+                提交修改
+            </button>
+        </div>
+
+    </form>
+</div>
+<script>
+    layui.use(['form','layer','laydate','jquery'],function (){
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var $ = layui.jquery;
+
+        //Method1
+        setTimeout(function (){
+            form.render();
+        },50)
+        // // Method2
+        // laydate.render({
+        //     elem: '#addTime' //指定元素
+        // });
+        //Method3
+        form.on("submit(go)",function (obj){
+            $.post({
+                url:"/contract/edit",
+                data:obj.field,
+                success:function(ret){
+                    if(ret.code==0){
+                        // layer.msg("修改成功！");//0作用
+                        alert("修改成功！");
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    }else if(ret.code==-1){
+                        layer.msg("修改失败！");
+                    }
+                },
+                error:function(){
+                        layer.msg("服务器正忙！")
+                }
+            })
+            return false;
+        })
+        //Method4
+        layui.verify({
+            timeCheck: function(value) {
+                // 1. 先校验格式：必须是 yyyy-MM-dd（年4位-月2位-日2位）
+                var dateReg = /^\d{4}-\d{2}-\d{2}$/;
+                if (!dateReg.test(value)) {
+                    return '日期格式错误！请按 yyyy-MM-dd 填写（例：2004-01-05）';//弹框对的
+                }
+
+                // 2. 再校验日期是否合法（避免“2024-02-30”“2024-13-01”这种无效日期）
+                var parts = value.split('-');
+                var year = parseInt(parts[0]);
+                var month = parseInt(parts[1]) - 1; // 月份从0开始（0=1月，11=12月）
+                var day = parseInt(parts[2]);
+
+                // 创建日期对象：如果日期无效，getFullYear会返回NaN或错误年份
+                var date = new Date(year, month, day);
+                if (date.getFullYear() !== year ||
+                    date.getMonth() !== month ||
+                    date.getDate() !== day) {
+                    return '日期不合法！请选择有效的年月日（例：2004-02-29 仅闰年可用）';
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

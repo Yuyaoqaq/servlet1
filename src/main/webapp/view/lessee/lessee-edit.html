@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>租户编辑</title>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/lib/layui/css/layui.css"> <!-- 弹窗样式依赖这个文件 -->
+
+
+    <script src="/static/js/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+</head>
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="hidden" name="id">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="name" class="layui-form-label">
+                <span class="x-red">*</span>姓名
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>请输姓名 例如 程雨遥
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="tel" class="layui-form-label">
+                电话
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="tel" name="tel" required lay-verify="required|number|telCheck"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入电话 例如 13098676538
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="sex" class="layui-form-label">
+                性别
+            </label>
+            <div class="layui-input-inline">
+                <select id="sex" name="sex" lay-verify="required">
+                    <option value="0">请选择</option>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入性别
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="np" class="layui-form-label">
+                籍贯
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="np" name="np" lay-verify="required"
+                       autocomplete="off" class="layui-input" >
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入籍贯 例如 xxx省xx区xx街道xx小区
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="idCard" class="layui-form-label">
+                身份证
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="idCard" name="idCard" lay-verify="required|number|idCheck"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入身份证 例如 500115200411254027
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="addTime" class="layui-form-label">
+                添加时间
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="addTime" name="addTime" lay-verify="required|timeCheck"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入添加时间 例如2004-11-25
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button  class="layui-btn layui-btn-fluid" lay-filter="go" lay-submit>
+                提交修改
+            </button>
+        </div>
+
+    </form>
+</div>
+<script>
+    layui.use(['form','layer','laydate','jquery'],function (){
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var $ = layui.jquery;
+
+        //Method1
+        setTimeout(function (){
+            form.render();
+        },50)
+        // // Method2
+        // laydate.render({
+        //     elem: '#addTime' //指定元素
+        // });
+        //Method3
+        form.on("submit(go)",function (obj){
+            $.post({
+                url:"/lessee/edit",
+                data:obj.field,
+                success:function(ret){
+                    if(ret.code==0){
+                        // layer.msg("修改成功！");//0作用
+                        alert("修改成功！");
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    }else if(ret.code==-1){
+                        layer.msg("修改失败！");
+                    }
+                },
+                error:function(){
+                        layer.msg("服务器正忙！")
+                }
+            })
+            return false;
+        })
+        //Method4
+        form.verify({
+            telCheck: function(value) {
+                // 将输入值转为数字
+                var num = parseInt(value);
+                // 验证是否为有效数字且在1-30之间
+                var numReg = /^\d{11}$/;
+                if(!numReg.test(value)){
+                    return '电话格式错误！ 请输入11位数字';
+                }
+            },
+            //Method4
+            // 新增：日期格式校验（yyyy-MM-dd）
+            timeCheck: function(value) {
+                // 1. 先校验格式：必须是 yyyy-MM-dd（年4位-月2位-日2位）
+                var dateReg = /^\d{4}-\d{2}-\d{2}$/;
+                if (!dateReg.test(value)) {
+                    return '日期格式错误！请按 yyyy-MM-dd 填写（例：2004-01-05）';//弹框对的
+                }
+
+                // 2. 再校验日期是否合法（避免“2024-02-30”“2024-13-01”这种无效日期）
+                var parts = value.split('-');
+                var year = parseInt(parts[0]);
+                var month = parseInt(parts[1]) - 1; // 月份从0开始（0=1月，11=12月）
+                var day = parseInt(parts[2]);
+
+                // 创建日期对象：如果日期无效，getFullYear会返回NaN或错误年份
+                var date = new Date(year, month, day);
+                if (date.getFullYear() !== year ||
+                    date.getMonth() !== month ||
+                    date.getDate() !== day) {
+                    return '日期不合法！请选择有效的年月日（例：2004-02-29 仅闰年可用）';
+                }
+            },
+            //Method5
+            idCheck:function (value){
+                var idReg =/^\d{18}$/;
+                if(!idReg.test(value)){
+                    return '身份证件码格式错误！ 请输入18有效位数字';
+                }
+            }
+        });
+    })
+</script>
+</body>
+</html>

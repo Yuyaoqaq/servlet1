@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>房屋编辑</title>
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <link rel="stylesheet" href="/static/lib/layui/css/layui.css"> <!-- 弹窗样式依赖这个文件 -->
+
+
+    <script src="/static/js/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+</head>
+<body>
+<div class="x-body">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="hidden" name="id">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="address" class="layui-form-label">
+                <span class="x-red">*</span>地址
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="address" name="address" required lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                <span class="x-red">*</span>请输入公寓地址 例如xx街道 xx小区 x栋x-x
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="floor" class="layui-form-label">
+                楼层
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="floor" name="floor" required lay-verify="required|number|floorCheck"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓楼层
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="roomNum" class="layui-form-label">
+                房间号
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="roomNum" name="roomNum" lay-verify="required|number"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓房间号 例如105
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="area" class="layui-form-label">
+                面积
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="area" name="area" lay-verify="required"
+                       autocomplete="off" class="layui-input" >
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓面积 例如xxx平
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="dir" class="layui-form-label">
+                朝向
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="dir" name="dir" lay-verify="required"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓朝向 例如 南
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="deco" class="layui-form-label">
+                装修
+            </label>
+            <div class="layui-input-inline">
+                <select id="deco" name="deco" lay-verify="required">
+                    <option value="0">请选择</option>
+                    <option value="1">毛坯</option>
+                    <option value="2">精装</option>
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请选择公寓是否装修
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="air" class="layui-form-label">
+                双气
+            </label>
+            <div class="layui-input-inline">
+                <select id="air" name="air" lay-verify="required">
+                    <option value="0">请选择</option>
+                    <option value="1">是</option>
+                    <option value="2">否</option>
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请选择公寓是否双气
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="price" class="layui-form-label">
+                价格
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="price" name="price" lay-verify="required|number"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓价格
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="rentStatus" class="layui-form-label">
+                出租状态
+            </label>
+            <div class="layui-input-inline">
+                <select id="rentStatus" name="rentStatus" lay-verify="required">
+                    <option value="0">请选择</option>
+                    <option value="1">已出租</option>
+                    <option value="2">未出租</option>
+                    <option value="2">停租</option>
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓出租状态
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="addTime" class="layui-form-label">
+                添加时间
+            </label>
+            <div class="layui-input-inline">
+                <input type="text" id="addTime" name="addTime" lay-verify="required|timeCheck"
+                       autocomplete="off" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓添加时间 例如2004-11-25
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label for="status" class="layui-form-label">
+                状态
+            </label>
+            <div class="layui-input-inline">
+                <select id="status" name="status" lay-verify="required">
+                    <option value="0">请选择</option>
+                    <option value="1">正常</option>
+                    <option value="2">删除</option>
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">
+                请输入公寓状态
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button  class="layui-btn layui-btn-fluid" lay-filter="go" lay-submit>
+                提交修改
+            </button>
+        </div>
+
+    </form>
+</div>
+<script>
+    layui.use(['form','layer','laydate','jquery'],function (){
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var $ = layui.jquery;
+
+        //Method1
+        setTimeout(function (){
+            form.render();
+        },50)
+        // // Method2
+        // laydate.render({
+        //     elem: '#addTime' //指定元素
+        // });
+        //Method3
+        form.on("submit(go)",function (obj){
+            $.post({
+                url:"/house/edit",
+                data:obj.field,
+                success:function(ret){
+                    if(ret.code==0){
+                        // layer.msg("修改成功！");//0作用
+                        alert("修改成功！");
+                        var index = parent.layer.getFrameIndex(window.name);
+                        parent.layer.close(index);
+                    }else if(ret.code==-1){
+                        layer.msg("修改失败！");
+                    }
+                },
+                error:function(){
+                        layer.msg("服务器正忙！")
+                }
+            })
+            return false;
+        })
+        //Method4
+        layui.verify({
+            timeCheck: function(value) {
+                // 1. 先校验格式：必须是 yyyy-MM-dd（年4位-月2位-日2位）
+                var dateReg = /^\d{4}-\d{2}-\d{2}$/;
+                if (!dateReg.test(value)) {
+                    return '日期格式错误！请按 yyyy-MM-dd 填写（例：2004-01-05）';//弹框对的
+                }
+
+                // 2. 再校验日期是否合法（避免“2024-02-30”“2024-13-01”这种无效日期）
+                var parts = value.split('-');
+                var year = parseInt(parts[0]);
+                var month = parseInt(parts[1]) - 1; // 月份从0开始（0=1月，11=12月）
+                var day = parseInt(parts[2]);
+
+                // 创建日期对象：如果日期无效，getFullYear会返回NaN或错误年份
+                var date = new Date(year, month, day);
+                if (date.getFullYear() !== year ||
+                    date.getMonth() !== month ||
+                    date.getDate() !== day) {
+                    return '日期不合法！请选择有效的年月日（例：2004-02-29 仅闰年可用）';
+                }
+            },
+            floorCheck: function(value) {
+                // 将输入值转为数字
+                var num = parseInt(value);
+                // 验证是否为有效数字且在1-30之间
+                if (isNaN(num) || num < 1 || num > 30) {
+                    return '请输入1-30之间的数字';
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

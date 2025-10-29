@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>租户信息</title>
+
+
+
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+
+    <script src="../../static/js/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+
+</head>
+
+<body>
+<div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="/index.html" target="_top">首页</a>
+        <a href="" target="_top">公寓管理</a>
+        <a >
+          <cite>租户信息</cite></a>
+      </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    <!--    href="javascript:location.replace(location.href);" -->
+    <!--    如 location.reload()）有一些区别：-->
+    <!--    它会用新的 URL 替换当前页面在历史记录中的位置，然后加载新页面（这里新页面就是当前页面）。-->
+    <!--    与 location.reload() 相比，它的特点是：-->
+    <!--    刷新后点击浏览器的 "后退" 按钮不会回到刷新前的状态-->
+    <!--    它会重新请求页面，而不是可能从缓存加载-->
+    <!--    更常见的页面刷新写法是：-->
+    <!--    href="javascript:location.reload();" - 普通刷新，可能从缓存加载-->
+    <!--    href="javascript:location.reload(true);" - 强制刷新，不从缓存加载-->
+
+</div>
+
+<div class="x-body">
+    <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so">
+            <div class="layui-inline"><input class="layui-input" placeholder="姓名" name="name" ></div>
+            <div class="layui-inline"><input class="layui-input" placeholder="身份证" name="idCard" ></div>
+
+            <button class="layui-btn"  lay-submit lay-filter="search"><i class="layui-icon">&#xe615;</i></button>
+        </form>
+    </div>
+    <xblock>
+        <button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon"></i>批量删除</button>
+        <button class="layui-btn" id="add"><i class="layui-icon"></i>添加</button>
+
+    </xblock>
+    <table class="layui-table" id="lesseetable" lay-filter="lesseeTable"></table>
+</div>
+<script>
+    var table;
+    var $;
+    var layer;
+    var form;
+
+    //MainMethod
+    layui.use(["table","jquery","layer","form"], function() {
+        table = layui.table;
+        $ = layui.jquery;
+        layer = layui.layer;
+        form =layui.form;
+
+        tablerender();
+        //Method2
+        form.on('submit(search)', function(data){
+            var field = data.field; // 获取表单字段值
+            // 此处可执行 Ajax 等操作
+            // console.log(field);
+            // {addr: 'beijing', floor: '', area: '', deco: '0'}
+            tablerender(field);
+            return false; // 阻止默认 form 跳转
+        });
+        //Method3
+        $("#add").click(function (){
+            layer.open({
+                type:2,
+                content:"./lesseeAdd.html",
+                area:["450px","350px"],
+                // title:"User Add",
+                end:function(){
+                    table.reload("lesseetable")
+                }
+            })
+        });
+        //Method4
+        table.on("tool(lesseeTable)",function (obj){
+            // console.log(obj)
+            // data
+            //     :
+            // {addTime: 1669171568000, address: '老代庄10号', air: 1, area: '30平', deco: 1, …}
+            if(obj.event == "edit"){
+                // layer.msg("edit your info");
+                layer.open({
+                    type:2,
+                    content:"lessee-edit.html",
+                    area:["450px","350px"],
+                    // title:"User Edit",
+                    success:function (layero,index){
+                        //官方提供一个全局方法获得弹出层iframe子层的dom对象
+                        let body = layer.getChildFrame("body",index);
+                        let lesseeData = obj.data;
+                        body.find("input[name=name]").val(lesseeData.name);
+                        body.find("select[name=tel]").val(lesseeData.tel);
+                        body.find("input[name=sex]").val(lesseeData.sex);
+                        body.find("select[name=np]").val(lesseeData.np);
+                        body.find("input[name=idCard]").val(lesseeData.idCard);
+                        body.find("input[name=id]").val(lesseeData.id);
+                        let date = new Date(lesseeData.addTime);
+                        let year = date.getFullYear();
+                        let month = date.getMonth() + 1;
+                        if (month < 10) {
+                            month = "0" + month;
+                        }
+                        let day = date.getDate();
+                        if (day < 10) {
+                            day = "0" + day;
+                        }
+                        let str= year + "-" + month + "-" + day;
+                        body.find("input[name=addTime]").val(str);
+                    },
+                    end:function(){
+                        table.reload("lesseetable");
+                    }
+                });
+            }else if(obj.event == "delete"){
+                layer.confirm("确定删除吗?",{icon:3,title:'notice'},function (index){
+                    $.post("/lessee/delete",
+                        {id:obj.data.id},
+                        function (ret){
+                            if (ret.code == 0) {
+                                layer.msg("删除成功");
+                                table.reload("lesseetable");
+                            } else if(code==-1){
+                                layer.msg("删除失败")
+                            }
+                        })
+                },function (index){
+                    layer.msg("服务器正忙！");
+                })
+            }
+        })
+        //Method6
+        setTimeout(function () {
+                $.post({
+                    url: "/examine",
+                    success: function (ret) {
+                        if (ret.code == 0) {
+                            console.log("login ok!")
+                        } else if (ret.code == -1) {
+                            // layer.msg("访问失败了！请先登陆...");
+                            // alert("访问失败了！请先登陆...")
+                            window.location.href = "/login.html";
+                        }
+                    },
+                    error: function () {
+                        layer.msg("登陆校验请求出错了。。。")
+                    }
+                })
+            }
+            , 5000)
+    })
+
+    //Method1
+    /*列表展示*/
+    function tablerender(parameterJson){
+        let url="/lessee/list"
+        table.render({
+            elem:"#lesseetable",
+            url:url,
+            where:parameterJson,
+            page: {
+                // elem: 'pageContainer', // 分页容器的ID（可选，默认会自动生成）
+                limit: 8, // 每页显示的条数
+                limits: [3, 6, 8], // 每页条数的选择项
+                layout: ['prev', 'page', 'next', 'count', 'limit','skip'], // 分页布局//上页、页码、下页、总数、一页几个、跳至‘skip’
+                groups: 5, // 连续显示的页码数量
+                first: '首页', // 首页文本
+                last: '尾页', // 尾页文本
+                prev: '上一页', // 上一页文本
+                next: '下一页', // 下一页文本
+                theme: '#1E9FFF' // 分页主题颜色
+            },
+            cols: [[
+                {type:"checkbox",align:"center"},
+                {field:"id",title:"编号",width:60,align:"center"},
+                {field:"name",title:"姓名",width:100,align:"center"},
+                {field:"tel",title:"电话",width:60,align:"center"},
+                {field:"sex",title:"性别",width:80,align:"center",templet(obj){
+                        return obj.sex==1?'男':'女';
+                    }},
+                {field:"np",title:"籍贯",width:80,align:"center"},
+                {field:"idCard",title:"身份证",width:160,align:"center"},
+                {field:"addTime",title:"添加时间",templet(obj){
+                        let date=new Date(obj.addTime);
+                        let year=date.getFullYear();
+                        let month=date.getMonth()+1;
+                        if(month<10){
+                            month="0"+month;
+                        }
+                        let day=date.getDate();
+                        if(day<10){
+                            day="0"+day;
+                        }
+                        return year + "-" + month + "-" + day;
+                    },align:"center",width:100},
+                {
+                    title:"操作",templet(obj){
+                        let str="<a class=\"layui-btn layui-btn-warm layui-btn-xs\" lay-event=\"edit\">编辑</a> ";
+                        str+="<a class=\"layui-btn layui-btn-danger layui-btn-xs\" lay-event=\"delete\">删除</a>";
+                        return str;
+                    },align:"center"
+                }
+            ]]
+        })
+    }
+
+    // Method5
+    function delAll(argument){
+        var checkStatus =table.checkStatus("lesseetable");
+        // {
+        //         console.log(checkStatus)
+        //         data: [{}, {}, ...],  // 存放所有选中行的数据（数组形式，每个元素是一行数据的对象）
+        //         isAll: false          // 布尔值，表示是否选中了所有数据（全选状态）
+        // }
+        if(checkStatus.data.length !=0){
+            var arr=[];//声明一个存放删除id的数组
+            for(var i=0;i<checkStatus.data.length;i++){
+                arr.push(checkStatus.data[i].id);//这里村的的就是每一行的id
+            }
+            $.ajax({
+                url:"/lessee/pldelete",
+                type:"post",
+                data:{ids:arr},
+                success:function(ret){
+                    if(ret.code==0){
+                        layer.msg("删除成功！")
+                    }else if(ret.code==-1){
+                        layer.msg("删除失败！")
+                    }
+                },
+                error:function (){
+                    layer.msg("服务器正忙！")
+                }
+            })
+        }else{
+            layer.alert("请选择需要删除的数据",{icon: 0,title:'提示'});
+        }
+        tablerender();
+        return false;
+//         如果这个函数绑定在点击事件上（如按钮、链接）：
+//         对于普通按钮，return false 通常用于阻止事件冒泡（避免父元素也触发同类事件）。
+//         对于 <a> 标签（链接），return false 可以阻止其默认跳转行为（避免页面刷新或跳转）。
+    }
+
+</script>
+
+</body>
+
+</html>

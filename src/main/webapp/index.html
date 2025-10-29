@@ -1,0 +1,191 @@
+<!doctype html>
+<html  class="x-admin-sm">
+<head>
+    <meta charset="UTF-8">
+    <title>公寓管理系统</title>
+
+    <link rel="stylesheet" href="/static/css/font.css">
+    <link rel="stylesheet" href="/static/css/xadmin.css">
+    <script src="/static/js/jquery-3.7.1.js"></script>
+    <script src="/static/lib/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="/static/js/xadmin.js"></script>
+    <script type="text/javascript" src="/static/js/cookie.js"></script>
+
+</head>
+
+<body>
+<!-- 顶部开始 -->
+<div class="container" style="background-color: #3C8DBC">
+    <div class="logo"><a href="/index.html">首页</a></div>
+
+    <!--折叠菜单栏-->
+    <div class="left_open">
+        <i title="展开左侧栏" class="iconfont">&#xe699;</i>
+    </div>
+
+    <!-- 个人中心 -->
+    <ul class="layui-nav right" lay-filter="">
+        <li class="layui-nav-item">
+            <a href="javascript:;">admin</a>
+            <dl class="layui-nav-child"> <!-- 二级菜单 -->
+                <dd><a onclick="x_admin_show('个人信息','https://www.murongmengjie.cn')">个人信息</a></dd>
+                <dd><a onclick="x_admin_show('切换帐号','http://www.baidu.com')">切换帐号</a></dd>
+                <dd><a href="/login.html">退出</a></dd>
+            </dl>
+        </li>
+        <li class="layui-nav-item to-index"><a href="/index.html">前台首页</a></li>
+    </ul>
+
+</div>
+<!-- 顶部结束 -->
+
+<!-- 中部开始 -->
+<!-- 左侧菜单开始 -->
+<!--第一个-->
+<div class="left-nav">
+    <div id="side-nav">
+        <ul id="nav">
+            <li>
+                <a >
+                    <i class="iconfont">&#xe6b8;</i>
+                    <cite>公寓管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li date-refresh="1">
+                        <a _href="/view/house/houselist.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>房屋信息</cite>
+                        </a>
+                    </li >
+                    <li>
+                        <a _href="/view/contract/contractlist.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>租凭合同</cite>
+
+                        </a>
+                    </li >
+                    <li>
+                        <a _href="/view/lessee/lesseelist.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>租户信息</cite>
+
+                        </a>
+                    </li >
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe723;</i>
+                    <cite>服务管理</cite>
+                    <i class="iconfont nav_right">&#xe697;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="zzzl.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>后勤人员</cite>
+                        </a>
+                    </li >
+                </ul>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="zzzl.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>修缮记录</cite>
+                        </a>
+                    </li >
+                </ul>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="zzzl.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>公寓活动</cite>
+                        </a>
+                    </li >
+                </ul>
+            </li>
+            <li>
+                <a href="javascript:;">
+                    <i class="iconfont">&#xe6ce;</i>
+                    <cite>管理员</cite>
+                    <i class="iconfont nav_right">&#xe697;</i>
+                </a>
+                <ul class="sub-menu">
+                    <li>
+                        <a _href="echarts1.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>角色管理</cite>
+                        </a>
+                    </li >
+                    <li>
+                        <a _href="echarts2.html">
+                            <i class="iconfont">&#xe6a7;</i>
+                            <cite>用户管理</cite>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- <div class="x-slide_left"></div> -->
+<!-- 左侧菜单结束 -->
+
+<!-- 右侧主体开始 -->
+<div class="page-content">
+    <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+        <ul class="layui-tab-title">
+            <li class="home"><i class="layui-icon">&#xe68e;</i>我的桌面</li>
+        </ul>
+        <div class="layui-unselect layui-form-select layui-form-selected" id="tab_right">
+            <dl>
+                <dd data-type="this">关闭当前</dd>
+                <dd data-type="other">关闭其它</dd>
+                <dd data-type="all">关闭全部</dd>
+            </dl>
+        </div>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <iframe src='/view/house/houselist.html'  class="x-iframe"></iframe>
+            </div>
+        </div>
+        <div id="tab_show"></div>
+    </div>
+</div>
+<div class="page-content-bg"></div>
+<!-- 右侧主体结束 -->
+
+<!-- 中部结束 -->
+
+<!-- 底部开始 -->
+<div class="footer">
+    <div class="copyright">Cy 2025922@666</div>
+</div>
+</body>
+<script>
+    layui.use("layer",function(){
+        var layer = layui.layer;
+        window.onload=function(){
+            setTimeout(function(){
+                $.post({
+                url:"/examine",
+                success:function (ret){
+                    if(ret.code==0){
+                        console.log("login ok!")
+                    } else if(ret.code==-1){
+                        // layer.msg("访问失败了！请先登陆...");
+                        alert("访问失败了！请先登陆...")
+                        window.location.href = "/login.html";
+                    }
+                },
+                error:function (){
+                    layer.msg("登陆校验请求出错了。。。")
+                }
+            })}
+            ,5000)
+        }
+    })
+
+</script>
+</html>

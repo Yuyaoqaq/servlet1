@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.cy</groupId>
+  <artifactId>department992</artifactId>
+  <packaging>war</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <dependencies>
+  <dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>javax.servlet-api</artifactId>
+    <version>4.0.1</version>
+  </dependency>
+  <dependency>
+    <groupId>javax.servlet.jsp</groupId>
+    <artifactId>javax.servlet.jsp-api</artifactId>
+    <version>2.3.1</version>
+  </dependency>
+  <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>5.1.49</version>
+  </dependency>
+  <dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>druid</artifactId>
+    <version>1.1.10</version>
+  </dependency>
+  <dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.46</version>
+  </dependency>
+
+  </dependencies>
+  <build>
+    <plugins>
+      <!-- 明确指定编译插件版本和语言等级 -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <!-- 推荐用 3.8.x 及以上版本（兼容 JDK 1.8） -->
+        <version>3.8.1</version>
+        <configuration>
+          <!-- source：源代码的语言等级（1.6/1.7/1.8 任选，需与你要的等级一致） -->
+          <source>1.8</source>
+          <!-- target：编译后 class 文件的兼容版本（必须与 source 一致或更高，建议同 source） -->
+          <target>1.8</target>
+          <!-- 编码避免中文乱码，也可能间接导致编译报错 -->
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
